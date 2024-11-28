@@ -1,22 +1,27 @@
 #pragma once
+#include <memory>
+#include <vector>
+
+class application;
+class renderer;
+class drawable;
+class camera;
 
 class engine {
 public:
     engine();
-
     ~engine();
-
-    void init(int32_t argc, char **argv) const;
+    void init(int32_t argc, char **argv);
+    int shutdown();
+    bool run();
+    bool process_events();
+    void add_drawable(std::shared_ptr<drawable> obj);
+    camera& get_camera();
 
 private:
-    uint32_t m_width{800};
-    uint32_t m_height{600};
-    uint32_t m_debug{BGFX_DEBUG_TEXT};
-    uint32_t m_reset{BGFX_RESET_VSYNC};
-
-    bgfx::VertexBufferHandle m_vbh{};
-    bgfx::IndexBufferHandle m_ibh{};
-    bgfx::ProgramHandle m_program{};
+    std::shared_ptr<application> m_app;
+    std::unique_ptr<renderer> m_renderer;
+    std::vector<std::shared_ptr<drawable>> m_drawables;
 };
 
 inline engine *g_engine{};

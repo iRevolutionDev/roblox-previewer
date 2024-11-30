@@ -33,7 +33,7 @@ public:
     void set_window_size(uint32_t width, uint32_t height);
 
 protected:
-    uint32_t m_width{800};
-    uint32_t m_height{600};
+    uint32_t m_width{1024};
+    uint32_t m_height{768};
     const char *m_window_title{"Roblox Previewer"};
 };

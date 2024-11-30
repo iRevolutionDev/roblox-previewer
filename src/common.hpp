@@ -59,9 +59,10 @@
 #include <uxtheme.h>
 
 #include <tlhelp32.h>
-#include <bgfx/bgfx.h>
 
-#include "windows.h"
+#include <bgfx/bgfx.h>
+#include "imgui.h"
+
 
 // clang-format on
 

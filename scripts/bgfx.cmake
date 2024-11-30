@@ -8,7 +8,3 @@ FetchContent_Declare(
         GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(bgfx)
-
-add_custom_target(install_bgfx
-        COMMAND ${CMAKE_COMMAND} --build ${bgfx_BINARY_DIR} --target install
-)

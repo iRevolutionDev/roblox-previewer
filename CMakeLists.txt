@@ -8,6 +8,7 @@ set(TEST_DIR "${PROJECT_SOURCE_DIR}/test")
 message(STATUS "Feching packages...")
 include(scripts/bgfx.cmake)
 include(scripts/glfw.cmake)
+include(scripts/imgui.cmake)
 
 # Project Files
 file(GLOB_RECURSE SRC_FILES
@@ -30,12 +31,37 @@ source_group(TREE "${SRC_DIR}" PREFIX "src" FILES ${SRC_FILES})
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE "${SRC_DIR}/common.hpp")
 
+# Shader Compilation
+message(STATUS "Compiling shaders...")
+file(GLOB SHADER_FILES
+        "${PROJECT_SOURCE_DIR}/shaders/**.sc"
+        "${PROJECT_SOURCE_DIR}/shaders/**.fs"
+)
+
+bgfx_compile_shaders(
+        TYPE VERTEX
+        SHADERS ${SHADER_FILES}
+        VARYING_DEF "${PROJECT_SOURCE_DIR}/shaders/varying.def.sc"
+        OUTPUT_DIR ${CMAKE_BINARY_DIR}/include/generated/shaders
+        AS_HEADERS
+)
+
+bgfx_compile_shaders(
+        TYPE FRAGMENT
+        SHADERS ${SHADER_FILES}
+        VARYING_DEF "${PROJECT_SOURCE_DIR}/shaders/varying.def.sc"
+        OUTPUT_DIR ${CMAKE_BINARY_DIR}/include/generated/shaders
+        AS_HEADERS
+)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${SRC_DIR}"
         "${BGFX_INCLUDE_DIR}"
         "${BIMG_INCLUDE_DIR}"
         "${BX_INCLUDE_DIR}"
         "${GLFW_INCLUDE_DIR}"
+        "${imgui_SOURCE_DIR}"
+        "${CMAKE_BINARY_DIR}/include/generated/shaders"
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
@@ -43,7 +69,15 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         bimg
         bx
         glfw
+        imgui
         ${CMAKE_DL_LIBS}
+)
+
+# Copy shaders directory to the build directory
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${PROJECT_SOURCE_DIR}/shaders"
+    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders"
 )
 
 if (WIN32)

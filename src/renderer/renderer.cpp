@@ -3,6 +3,7 @@
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <GLFW/glfw3.h>
+#include "imgui.hpp"
 
 renderer::renderer() = default;
 
@@ -30,14 +31,24 @@ void renderer::init(const std::shared_ptr<application> &app, const bgfx::Rendere
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
     bgfx::setViewRect(0, 0, 0, static_cast<uint16_t>(width), static_cast<uint16_t>(height));
 
-    m_camera.set_perspective(60.0f, float(width) / float(height), 0.1f, 100.0f);
+    m_camera.set_perspective(60.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    m_imgui = std::make_shared<imgui>();
 }
 
 void renderer::shutdown() const {
-    for (auto &obj: m_drawables) {
+    for (const auto &obj: m_drawables) {
         obj->shutdown();
     }
+
+    m_imgui->shutdown();
     bgfx::shutdown();
+
+    ImGui::DestroyContext();
 }
 
 void renderer::render_frame() {
@@ -65,9 +76,18 @@ void renderer::render_frame() {
     bgfx::dbgTextPrintf(0, 9, 0x0f, "Shaders: %d", stats->numShaders);
     bgfx::dbgTextPrintf(0, 11, 0x0f, "Frame Time: %.3f ms", stats->cpuTimeFrame / 1000.0f);
 
-    for (auto &obj: m_drawables) {
+    for (const auto &obj: m_drawables) {
         obj->render();
     }
+
+    m_imgui->reset(static_cast<uint16_t>(width), static_cast<uint16_t>(height));
+    m_imgui->new_frame();
+    ImGui::ShowDemoWindow();
+    ImGui::Render();
+    if (auto *draw_data = ImGui::GetDrawData()) {
+        m_imgui->render(draw_data);
+    }
+
     bgfx::frame();
 }
 
@@ -81,6 +101,19 @@ camera &renderer::get_camera() {
 }
 
 void renderer::handle_input() {
+    ImGuiIO &io = ImGui::GetIO();
+    int width, height;
+    m_app->get_window_size(width, height);
+    io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
+
+    double mouse_x, mouse_y;
+    glfwGetCursorPos(m_app->get_window(), &mouse_x, &mouse_y);
+    io.MousePos = ImVec2(static_cast<float>(mouse_x), static_cast<float>(mouse_y));
+
+    for (int i = 0; i < 3; i++) {
+        io.MouseDown[i] = glfwGetMouseButton(m_app->get_window(), i) == GLFW_PRESS;
+    }
+
     if (glfwGetKey(m_app->get_window(), GLFW_KEY_W) == GLFW_PRESS) {
         m_camera.move_forward(0.1f);
     }

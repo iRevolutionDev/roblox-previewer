@@ -51,6 +51,8 @@ int glfw_application::shutdown() {
     if (m_window) {
         glfwDestroyWindow(m_window);
     }
+
+    bgfx::renderFrame();
     glfwTerminate();
     return 0;
 }

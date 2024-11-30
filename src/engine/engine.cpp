@@ -51,6 +51,8 @@ bool engine::run() {
         m_renderer->render_frame();
         m_app->poll_events();
     }
+
+    shutdown();
     return true;
 }
 

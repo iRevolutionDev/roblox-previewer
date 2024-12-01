@@ -3,6 +3,8 @@
 #include <bgfx/platform.h>
 #include <bx/math.h>
 
+#include "shader_utils.hpp"
+
 struct PosColorVertex {
     float x, y, z;
     uint32_t abgr;
@@ -36,32 +38,6 @@ static const uint16_t s_cubeIndices[] = {
 
 static bgfx::VertexLayout s_vertexLayout;
 
-static auto vs_shader_code = R"(
-    #version 330 core
-    uniform mat4 u_modelViewProj;
-    in vec3 a_position;
-    in vec4 a_color0;
-    out vec4 v_color;
-    void main() {
-        gl_Position = u_modelViewProj * vec4(a_position, 1.0);
-        v_color = a_color0;
-    }
-)";
-
-static auto fs_shader_code = R"(
-    #version 330 core
-    in vec4 v_color;
-    out vec4 fragColor;
-    void main() {
-        fragColor = v_color;
-    }
-)";
-
-bgfx::ShaderHandle load_shader(const char *shader_code, const char *name) {
-    const bgfx::Memory *mem = bgfx::copy(shader_code, strlen(shader_code) + 1);
-    return bgfx::createShader(mem);
-}
-
 void cube::init() {
     s_vertexLayout.begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
@@ -77,8 +53,8 @@ void cube::init() {
         bgfx::makeRef(s_cubeIndices, sizeof(s_cubeIndices))
     );
 
-    bgfx::ShaderHandle vs = load_shader(vs_shader_code, "vs_cube");
-    bgfx::ShaderHandle fs = load_shader(fs_shader_code, "fs_cube");
+    bgfx::ShaderHandle vs = create_shader("v_simple.bin", "vshader");
+    bgfx::ShaderHandle fs = create_shader("f_simple.bin", "fshader");
     m_program = bgfx::createProgram(vs, fs, true);
 }
 

@@ -16,7 +16,7 @@ public:
     bool run();
     bool process_events();
     void add_drawable(std::shared_ptr<drawable> obj);
-    camera& get_camera();
+    camera& get_camera() const;
 
 private:
     std::shared_ptr<application> m_app;

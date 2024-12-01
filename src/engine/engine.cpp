@@ -32,8 +32,8 @@ void engine::init(int32_t argc, char **argv) {
     add_drawable(cube_obj);
 
     // Set up the camera temporary bloated code ¯\_(ツ)_/¯
-    auto& cam = m_renderer->get_camera();
-    cam.set_position({0.0f, 0.0f, -5.0f});
+    auto &cam = m_renderer->get_camera();
+    cam.set_position({0.0f, 0.0f, 5.0f});
     cam.look_at({0.0f, 0.0f, 0.0f});
 }
 
@@ -65,7 +65,6 @@ void engine::add_drawable(std::shared_ptr<drawable> obj) {
     m_renderer->add_drawable(obj);
 }
 
-camera& engine::get_camera() {
+camera &engine::get_camera() const {
     return m_renderer->get_camera();
 }
-

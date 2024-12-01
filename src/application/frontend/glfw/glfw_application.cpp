@@ -42,6 +42,15 @@ void glfw_application::init(int32_t argc, char **argv) {
         return;
     }
 
+#if _DEBUG
+    AllocConsole();
+    if (AttachConsole(ATTACH_PARENT_PROCESS)) {
+        FILE *stream;
+        freopen_s(&stream, "CONOUT$", "w", stdout);
+        freopen_s(&stream, "CONOUT$", "w", stderr);
+    }
+#endif
+
     glfwSetKeyCallback(m_window, glfw_keyCallback);
 
     bgfx::renderFrame();

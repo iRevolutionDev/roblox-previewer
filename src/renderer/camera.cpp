@@ -42,7 +42,7 @@ void camera::move_backward(float delta) {
 
 void camera::move_left(float delta) {
     bx::Vec3 forward = bx::normalize(bx::sub(m_target, m_position));
-    bx::Vec3 left = bx::cross({0.0f, 1.0f, 0.0f}, forward);
+    bx::Vec3 left = bx::cross(forward, {0.0f, 1.0f, 0.0f});
     m_position = bx::add(m_position, bx::mul(left, delta));
     m_target = bx::add(m_target, bx::mul(left, delta));
     update_view_matrix();
@@ -50,7 +50,7 @@ void camera::move_left(float delta) {
 
 void camera::move_right(float delta) {
     bx::Vec3 forward = bx::normalize(bx::sub(m_target, m_position));
-    bx::Vec3 right = bx::cross(forward, {0.0f, 1.0f, 0.0f});
+    bx::Vec3 right = bx::cross({0.0f, 1.0f, 0.0f}, forward);
     m_position = bx::add(m_position, bx::mul(right, delta));
     m_target = bx::add(m_target, bx::mul(right, delta));
     update_view_matrix();

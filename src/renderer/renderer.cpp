@@ -55,26 +55,8 @@ void renderer::render_frame() {
     int width, height;
     m_app->get_window_size(width, height);
     bgfx::reset(static_cast<uint32_t>(width), static_cast<uint32_t>(height), BGFX_RESET_VSYNC);
-    bgfx::setViewRect(0, 0, 0, static_cast<uint16_t>(width), static_cast<uint16_t>(height));
 
     handle_input();
-
-    bgfx::setViewTransform(0, m_camera.get_view_matrix(), m_camera.get_proj_matrix());
-
-    bgfx::touch(0);
-
-    bgfx::dbgTextClear();
-    bgfx::dbgTextPrintf(0, 0, 0x0f, "Roblox Previewer - Debug Info");
-
-    const bgfx::Stats *stats = bgfx::getStats();
-    bgfx::dbgTextPrintf(0, 3, 0x0f, "GPU: %s", bgfx::getRendererName(bgfx::getRendererType()));
-    bgfx::dbgTextPrintf(0, 4, 0x0f, "Resolution: %d x %d", stats->width, stats->height);
-    bgfx::dbgTextPrintf(0, 5, 0x0f, "Draw Calls: %d", stats->numDraw);
-    bgfx::dbgTextPrintf(0, 6, 0x0f, "Compute Calls: %d", stats->numCompute);
-    bgfx::dbgTextPrintf(0, 7, 0x0f, "Primitives: %d", stats->numPrims);
-    bgfx::dbgTextPrintf(0, 8, 0x0f, "Textures: %d", stats->numTextures);
-    bgfx::dbgTextPrintf(0, 9, 0x0f, "Shaders: %d", stats->numShaders);
-    bgfx::dbgTextPrintf(0, 11, 0x0f, "Frame Time: %.3f ms", stats->cpuTimeFrame / 1000.0f);
 
     for (const auto &obj: m_drawables) {
         obj->render();
@@ -87,6 +69,24 @@ void renderer::render_frame() {
     if (auto *draw_data = ImGui::GetDrawData()) {
         m_imgui->render(draw_data);
     }
+
+    bgfx::setViewTransform(0, m_camera.get_view_matrix(), m_camera.get_proj_matrix());
+
+    bgfx::touch(0);
+
+    bgfx::dbgTextClear();
+    bgfx::dbgTextPrintf(0, 0, 0x0f, "Roblox Previewer - Debug Info");
+
+    bgfx::setViewRect(0, 0, 0, static_cast<uint16_t>(width), static_cast<uint16_t>(height));
+    const bgfx::Stats *stats = bgfx::getStats();
+    bgfx::dbgTextPrintf(0, 3, 0x0f, "GPU: %s", bgfx::getRendererName(bgfx::getRendererType()));
+    bgfx::dbgTextPrintf(0, 4, 0x0f, "Resolution: %d x %d", stats->width, stats->height);
+    bgfx::dbgTextPrintf(0, 5, 0x0f, "Draw Calls: %d", stats->numDraw);
+    bgfx::dbgTextPrintf(0, 6, 0x0f, "Compute Calls: %d", stats->numCompute);
+    bgfx::dbgTextPrintf(0, 7, 0x0f, "Primitives: %d", stats->numPrims);
+    bgfx::dbgTextPrintf(0, 8, 0x0f, "Textures: %d", stats->numTextures);
+    bgfx::dbgTextPrintf(0, 9, 0x0f, "Shaders: %d", stats->numShaders);
+    bgfx::dbgTextPrintf(0, 11, 0x0f, "Frame Time: %.3f ms", stats->cpuTimeFrame / 1000.0f);
 
     bgfx::frame();
 }

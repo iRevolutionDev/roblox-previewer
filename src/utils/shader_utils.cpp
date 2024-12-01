@@ -1,10 +1,10 @@
 
-#include "shader_utils.hpp"
+#include "../renderer/shader_utils.hpp"
 #include <filesystem>
 #include <fstream>
 #include <vector>
 #include <stdexcept>
-#include <bgfx/bgfx.h>
+#include <../../cmake-build-debug-visual-studio/_deps/bgfx-src/bgfx/include/bgfx/bgfx.h>
 
 bgfx::ShaderHandle create_shader(const std::string &shader_path, const char *name) {
     const auto current_path = std::filesystem::current_path();

@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #include "imgui.hpp"
-#include "shader_utils.hpp"
+#include "utils/shader_utils.hpp"
 
 #include "bx/math.h"
 
@@ -29,8 +29,8 @@ void imgui::init() {
     update_font_texture();
     m_texture_uniform = createUniform("s_tex", bgfx::UniformType::Sampler);
 
-    const auto vs_handle = create_shader("v_imgui.bin", "v_imgui");
-    const auto fs_handle = create_shader("f_imgui.bin", "f_imgui");
+    const auto vs_handle = shaders::create_shader("v_imgui.bin", "v_imgui");
+    const auto fs_handle = shaders::create_shader("f_imgui.bin", "f_imgui");
     m_program = createProgram(vs_handle, fs_handle, true);
 }
 
@@ -60,7 +60,7 @@ void imgui::render(ImDrawData *draw_data) {
 
     draw_data->ScaleClipRects(io.DisplayFramebufferScale);
 
-    uint64_t state =
+    constexpr auto state =
             BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA |
             BGFX_STATE_BLEND_FUNC(
                 BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);

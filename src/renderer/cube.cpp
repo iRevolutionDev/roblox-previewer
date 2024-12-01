@@ -1,9 +1,8 @@
 #include "cube.hpp"
 #include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
 #include <bx/math.h>
 
-#include "shader_utils.hpp"
+#include "utils/shader_utils.hpp"
 
 struct PosColorVertex {
     float x, y, z;
@@ -44,18 +43,18 @@ void cube::init() {
             .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true, true)
             .end();
 
-    m_vbh = bgfx::createVertexBuffer(
+    m_vbh = createVertexBuffer(
         bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)),
         s_vertexLayout
     );
 
-    m_ibh = bgfx::createIndexBuffer(
+    m_ibh = createIndexBuffer(
         bgfx::makeRef(s_cubeIndices, sizeof(s_cubeIndices))
     );
 
-    bgfx::ShaderHandle vs = create_shader("v_simple.bin", "vshader");
-    bgfx::ShaderHandle fs = create_shader("f_simple.bin", "fshader");
-    m_program = bgfx::createProgram(vs, fs, true);
+    const auto vs = shaders::create_shader("v_simple.bin", "vshader");
+    const auto fs = shaders::create_shader("f_simple.bin", "fshader");
+    m_program = createProgram(vs, fs, true);
 }
 
 void cube::render() {
@@ -70,14 +69,14 @@ void cube::render() {
 
     bgfx::setTransform(mtx);
 
-    bgfx::setVertexBuffer(0, m_vbh);
-    bgfx::setIndexBuffer(m_ibh);
+    setVertexBuffer(0, m_vbh);
+    setIndexBuffer(m_ibh);
 
-    bgfx::submit(0, m_program);
+    submit(0, m_program);
 }
 
 void cube::shutdown() {
-    bgfx::destroy(m_vbh);
-    bgfx::destroy(m_ibh);
-    bgfx::destroy(m_program);
+    destroy(m_vbh);
+    destroy(m_ibh);
+    destroy(m_program);
 }

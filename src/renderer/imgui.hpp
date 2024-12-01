@@ -1,6 +1,6 @@
 #pragma once
 
-#define VIEW_ID 255
+#define VIEW_ID (255 & 0xff)
 
 class imgui {
 public:
